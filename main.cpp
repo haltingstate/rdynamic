@@ -2,19 +2,32 @@
 #include <iostream>
 #include <dlfcn.h>
 
-int main() {
-    using std::cout;
-    using std::cerr;
+#include <stdio.h>
 
+void* load_dynamic_library(const char* library_so_path)
+{
+	
     // load the triangle library
     void* triangle = dlopen("./triangle.so", RTLD_LAZY);
-    if (!triangle) {
-        cerr << "Cannot load library: " << dlerror() << '\n';
+    if (!triangle) 
+    {
+		printf("ERROR: load_dynamic_library, cannot load library %s, error= %s \n", 
+		library_so_path, dlerror() );
+        //cerr << "Cannot load library: " << dlerror() << '\n';
         return 1;
     }
 
     // reset errors
     dlerror();
+    	
+	
+}
+
+int main() {
+    using std::cout;
+    using std::cerr;
+
+
 
 	{
 		// load the symbol (Hello Function)
@@ -33,12 +46,13 @@ int main() {
 			return 1;
 		}
 		
-		// call the loaded function
-		cout << "Calling hello...\n";
-		hello();
 	}
     
 	{
+		
+		// call the loaded function
+		cout << "Calling hello...\n";
+		hello();
 		// load the symbols (class; creation/deletion and stuff)
 		
 		cout << "Loading class symbols\n";
