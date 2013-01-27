@@ -23,9 +23,21 @@ void* load_library(const char* library_so_path)
 	return dll_ptr;
 }
 
-void* load_symbol(void* ddl_ptr, const char* symbol_name)
+void* load_symbol(void* loaded_library, const char* symbol_name)
 {
-
+	dlerror(); // reset errors
+	
+	void* symbol_ptr = dlsym(loaded_library, symbol_name);
+	const char *dlsym_error = dlerror();
+	if (dlsym_error) 
+	{
+		printf("ERROR: load_symbol, cannot load symbol %s, error= %s \n", 
+		symbol_name, dlsym_error);
+		dlclose(loaded_library);
+		return NULL;
+	}
+	
+	return symbol_ptr;
 }
 
 int main() {
@@ -33,16 +45,19 @@ int main() {
     using std::cerr;
 
 
-	void* loaded_dll = load_library(("./triangle.so");
+	void* loaded_dll = load_library("./triangle.so");
 	
 	{
 		// load the symbol (Hello Function)
 		cout << "Loading symbol hello...\n";
 		typedef void (*hello_t)();
 
-		// reset errors
-		dlerror();
-		hello_t hello = (hello_t) dlsym(loaded_dll, "hello");
+		dlerror(); // reset errors
+		hello_t hello = (hello_t) load_symbol(loaded_dll, "hello");
+		
+		if(hello == NULL)
+			return 1;
+
 		const char *dlsym_error = dlerror();
 		if (dlsym_error) 
 		{
@@ -64,22 +79,11 @@ int main() {
 		
 		cout << "Loading class symbols\n";
 
-		create_t* create_triangle = (create_t*) dlsym(loaded_dll, "create");
-		const char* dlsym_error = dlerror();
-		if (dlsym_error) 
-		{
-			cerr << "Cannot load symbol create: " << dlsym_error << '\n';
-			return 1;
-		}
-		
-		destroy_t* destroy_triangle = (destroy_t*) dlsym(loaded_dll, "destroy");
-		dlsym_error = dlerror();
-		if (dlsym_error) 
-		{
-			cerr << "Cannot load symbol destroy: " << dlsym_error << '\n';
-			return 1;
-		}
+		create_t* create_triangle = (create_t*) load_symbol(loaded_dll, "create");
+		destroy_t* destroy_triangle = (destroy_t*) load_symbol(loaded_dll, "destroy");
 
+		if(create_triangle == NULL || destroy_triangle == NULL)
+			return 1;
 		// create an instance of the class
 		class polygon* poly = create_triangle();
 
