@@ -89,7 +89,8 @@ int main() {
 
 		// use the class
 		poly->set_side_length(7);
-			cout << "The area is: " << poly->area() << '\n';
+		
+		printf("class_test: the area is %f \n", poly->area() );
 
 		// destroy the class
 		destroy_triangle(poly);
