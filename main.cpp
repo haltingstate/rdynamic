@@ -4,23 +4,28 @@
 
 #include <stdio.h>
 
-void* load_dynamic_library(const char* library_so_path)
+void* load_library(const char* library_so_path)
 {
 	
     // load the triangle library
-    void* triangle = dlopen("./triangle.so", RTLD_LAZY);
-    if (!triangle) 
+    void* dll_ptr = dlopen("./triangle.so", RTLD_LAZY);
+    if (dll_ptr == NULL) 
     {
 		printf("ERROR: load_dynamic_library, cannot load library %s, error= %s \n", 
 		library_so_path, dlerror() );
         //cerr << "Cannot load library: " << dlerror() << '\n';
-        return 1;
+        return NULL;
     }
 
     // reset errors
     dlerror();
-    	
 	
+	return dll_ptr;
+}
+
+void* load_symbol(void* ddl_ptr, const char* symbol_name)
+{
+
 }
 
 int main() {
@@ -28,7 +33,8 @@ int main() {
     using std::cerr;
 
 
-
+	void* loaded_dll = load_library(("./triangle.so");
+	
 	{
 		// load the symbol (Hello Function)
 		cout << "Loading symbol hello...\n";
@@ -36,28 +42,29 @@ int main() {
 
 		// reset errors
 		dlerror();
-		hello_t hello = (hello_t) dlsym(triangle, "hello");
+		hello_t hello = (hello_t) dlsym(loaded_dll, "hello");
 		const char *dlsym_error = dlerror();
 		if (dlsym_error) 
 		{
 			cerr << "Cannot load symbol 'hello': " << dlsym_error <<
 				'\n';
-			dlclose(triangle);
+			dlclose(loaded_dll);
 			return 1;
 		}
 		
+		// call the loaded function
+		cout << "Calling hello...\n";
+		hello();		
 	}
     
 	{
 		
-		// call the loaded function
-		cout << "Calling hello...\n";
-		hello();
+
 		// load the symbols (class; creation/deletion and stuff)
 		
 		cout << "Loading class symbols\n";
 
-		create_t* create_triangle = (create_t*) dlsym(triangle, "create");
+		create_t* create_triangle = (create_t*) dlsym(loaded_dll, "create");
 		const char* dlsym_error = dlerror();
 		if (dlsym_error) 
 		{
@@ -65,7 +72,7 @@ int main() {
 			return 1;
 		}
 		
-		destroy_t* destroy_triangle = (destroy_t*) dlsym(triangle, "destroy");
+		destroy_t* destroy_triangle = (destroy_t*) dlsym(loaded_dll, "destroy");
 		dlsym_error = dlerror();
 		if (dlsym_error) 
 		{
@@ -84,5 +91,5 @@ int main() {
 		destroy_triangle(poly);
 	}
     // unload the triangle library
-    dlclose(triangle);
+    dlclose(loaded_dll);
 }
