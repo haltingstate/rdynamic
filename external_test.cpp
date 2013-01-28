@@ -1,3 +1,6 @@
 #include "external_test.hpp"
 
-extern int test_var = 0;
+extern "C" 
+{
+__attribute__ ((visibility ("default"))) int test_var = 0;
+}

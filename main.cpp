@@ -1,10 +1,13 @@
-#include "polygon.hpp"
-//#include <iostream>
+#include <stdio.h>
 #include <dlfcn.h>
 
-#include <stdio.h>
+#include "polygon.hpp"
+#include "external_test.cpp"
 
 #define BUILDING_DLL
+
+//-fvisibility-inlines-hidden
+//-fvisibility=hidden
 
 void* load_library(const char* library_so_path)
 {
@@ -46,7 +49,9 @@ int main() {
     //using std::cout;
     //using std::cerr;
 
-
+	printf("test_var= %d\n", test_var);
+	test_var = 5;
+	
 	void* loaded_dll = load_library("./triangle.so");
 	
 	{

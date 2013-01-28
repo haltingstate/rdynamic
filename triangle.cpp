@@ -8,6 +8,7 @@
 	Example of function that wil be exported by module
 */
 
+
 extern "C" void hello() 
 {
 //    std::cout << "hello" << '\n';
@@ -21,6 +22,7 @@ extern "C" void hello()
 	Example of class that will be exported by module
 */
 
+
 class triangle : public polygon 
 {
 	public:
@@ -32,6 +34,7 @@ class triangle : public polygon
 };
 
 // the class factories
+
 extern "C" polygon* create() 
 {
     return new triangle;
