@@ -37,7 +37,4 @@
 
 //#define EXPORT __declspec(EXPORT)
 
-extern "C" 
-{
 __attribute__ ((visibility ("default"))) extern int test_var;
-}
