@@ -1,8 +1,10 @@
 #include "polygon.hpp"
-#include <iostream>
+//#include <iostream>
 #include <dlfcn.h>
 
 #include <stdio.h>
+
+#define BUILDING_DLL
 
 void* load_library(const char* library_so_path)
 {
@@ -41,34 +43,22 @@ void* load_symbol(void* loaded_library, const char* symbol_name)
 }
 
 int main() {
-    using std::cout;
-    using std::cerr;
+    //using std::cout;
+    //using std::cerr;
 
 
 	void* loaded_dll = load_library("./triangle.so");
 	
 	{
 		// load the symbol (Hello Function)
-		cout << "Loading symbol hello...\n";
+		printf("Loading symbol hello...\n");
 		typedef void (*hello_t)();
 
 		dlerror(); // reset errors
 		hello_t hello = (hello_t) load_symbol(loaded_dll, "hello");
 		
-		if(hello == NULL)
-			return 1;
-
-		const char *dlsym_error = dlerror();
-		if (dlsym_error) 
-		{
-			cerr << "Cannot load symbol 'hello': " << dlsym_error <<
-				'\n';
-			dlclose(loaded_dll);
-			return 1;
-		}
-		
 		// call the loaded function
-		cout << "Calling hello...\n";
+		printf("Calling hello...\n");
 		hello();		
 	}
     
@@ -77,7 +67,7 @@ int main() {
 
 		// load the symbols (class; creation/deletion and stuff)
 		
-		cout << "Loading class symbols\n";
+		printf("Loading class symbols\n");
 
 		create_t* create_triangle = (create_t*) load_symbol(loaded_dll, "create");
 		destroy_t* destroy_triangle = (destroy_t*) load_symbol(loaded_dll, "destroy");

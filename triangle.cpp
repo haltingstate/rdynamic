@@ -1,16 +1,21 @@
 #include "polygon.hpp"
 #include <math.h>
+#include <stdio.h>
+
+#include "external_test.hpp"
 
 /*
-	Example of a Class that wil be exported by module
+	Example of function that wil be exported by module
 */
-
-#include <iostream>
 
 extern "C" void hello() 
 {
-    std::cout << "hello" << '\n';
+//    std::cout << "hello" << '\n';
+	printf("hello \n");
+
+	printf("EXTERN= %d \n", test_var);
 }
+
 
 /*
 	Example of class that will be exported by module
